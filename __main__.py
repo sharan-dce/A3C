@@ -33,6 +33,7 @@ if __name__ == '__main__':
 	argparse.add_argument('--log_dir', action = readable_dir)
 	argparse.add_argument('--threads', type = int, default = 8)
 	argparse.add_argument('--gifs_save_interval', type = int)
+	argparse.add_argument('--checkpoint_save_interval', type = int)
 
 	args = argparse.parse_args()
 
@@ -47,4 +48,5 @@ if __name__ == '__main__':
 		args.actor_critic.load_weights(args.checkpoint_path)
 	args.target_network = ActorCritic(args.environments[0].action_space.n)
 	args.target_network.set_weights(args.actor_critic.get_weights())
+	args.target_network.set_threads(args.threads)
 	run_training_procedure(args)
