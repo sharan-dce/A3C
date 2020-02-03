@@ -23,19 +23,16 @@ def get_optimizer(optimizer_name):
 if __name__ == '__main__':
 	from argparse import ArgumentParser
 	argparse = ArgumentParser()
-	argparse.add_argument('--log_dir', action = readable_dir)
 	argparse.add_argument('--learning_rate', type = float)
-	argparse.add_argument('--render_testing', action = "store_true")
 	argparse.add_argument('--environment', type = str)
 	argparse.add_argument('--optimizer', type = str)
-	argparse.add_argument('--epochs', type = int)
-	argparse.add_argument('--episodes_per_epoch', type = int)
-	argparse.add_argument('--tests_per_epoch', type = int)
 	argparse.add_argument('--gamma', type = float)
 	argparse.add_argument('--checkpoint_dir', action = readable_dir)
 	argparse.add_argument('--gifs_dir', action = readable_dir)
 	argparse.add_argument('--checkpoint_path', action = readable_file)
+	argparse.add_argument('--log_dir', action = readable_dir)
 	argparse.add_argument('--threads', type = int, default = 8)
+	argparse.add_argument('--gifs_save_interval', type = int)
 
 	args = argparse.parse_args()
 
@@ -45,6 +42,7 @@ if __name__ == '__main__':
 	args.optimizer = get_optimizer(args.optimizer)(args.learning_rate)
 	args.actor_critic = ActorCritic(args.environments[0].action_space.n)
 	args.actor_critic.set_threads(args.threads)
+
 	if args.checkpoint_path != None:
 		args.actor_critic.load_weights(args.checkpoint_path)
 
