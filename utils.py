@@ -1,6 +1,6 @@
 import argparse
 import os
-
+import tensorflow as tf
 class readable_dir(argparse.Action):
 	def __call__(self, parser, namespace, values, option_string = None):
 		prospective_dir = values
@@ -17,3 +17,8 @@ class readable_file(argparse.Action):
 		if not os.path.isfile(prospective_file):
 			raise argparse.ArgumentTypeError("file:{0} is not a valid file".format(prospective_file))
 		setattr(namespace,self.dest,prospective_file)
+
+def process_screen(image):
+	image = tf.convert_to_tensor(image, dtype = tf.float32)
+	image /= 1e-6 + tf.reduce_max(image)
+	return image * 2.0 - 1.0
