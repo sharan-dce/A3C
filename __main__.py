@@ -35,7 +35,6 @@ if __name__ == '__main__':
 	argparse.add_argument('--checkpoint_dir', action = readable_dir)
 	argparse.add_argument('--gifs_dir', action = readable_dir)
 	argparse.add_argument('--checkpoint_path', action = readable_file)
-	argparse.add_argument('--use_lstm_layers', action = 'store_true')
 	argparse.add_argument('--threads', type = int, default = 8)
 
 	args = argparse.parse_args()
@@ -44,7 +43,8 @@ if __name__ == '__main__':
 	args.environments = [gym.make(args.environment) for _ in range(args.threads)]
 
 	args.optimizer = get_optimizer(args.optimizer)(args.learning_rate)
-	args.actor_critic = ActorCritic(args.environments[0].action_space.n, args.use_lstm_layers)
+	args.actor_critic = ActorCritic(args.environments[0].action_space.n)
+	args.actor_critic.set_threads(args.threads)
 	if args.checkpoint_path != None:
 		args.actor_critic.load_weights(args.checkpoint_path)
 
