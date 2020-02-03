@@ -5,7 +5,6 @@ import dill
 
 class ActorCritic():
     def __init__(self, n_actions):
-        super(ActorCritic, self).__init__()
         self.n_actions = n_actions
 
         self._layers = []
