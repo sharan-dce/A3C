@@ -60,6 +60,16 @@ class ActorCritic():
         for layer, weight in zip(self._layers + [self._actor, self._critic], weight_list):
             layer.set_weights(weight)
 
+    def get_weights(self):
+        weight_list = []
+        for layer in self._layers + [self._actor, self._critic]:
+            weight_list.append(layer.get_weights())
+        return weight_list
+
+    def set_weights(self, weights):
+        for layer, weight in zip(self._layers + [self._actor, self._critic], weights):
+            layer.set_weights(weight)
+
     @property
     def trainable_variables(self):
         vars = []

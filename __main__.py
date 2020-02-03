@@ -45,5 +45,6 @@ if __name__ == '__main__':
 
 	if args.checkpoint_path != None:
 		args.actor_critic.load_weights(args.checkpoint_path)
-
+	args.target_network = ActorCritic(args.environments[0].action_space.n)
+	args.target_network.set_weights(args.actor_critic.get_weights())
 	run_training_procedure(args)
