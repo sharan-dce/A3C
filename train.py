@@ -5,8 +5,6 @@ import threading
 import os
 from imageio import mimsave
 
-def filter_grads(grad_var):
-    return grad_var
 
 def manage_network_update(actor_loss, critic_loss, tn, tape):
     actor_grads = tape.gradient(actor_loss, tn.actor_critic.trainable_variables)
