@@ -37,6 +37,7 @@ def worker_process(tn, thread_number):
                 new_state = process_screen(new_state)
 
                 if done:
+                    print('Thread {} Episode done'.format(thread_number))
                     if thread_number == 0:
                         episode_count += 1
                         with tn.summary_writer.as_default():
