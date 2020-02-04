@@ -14,4 +14,4 @@ python3 __main__.py \
 --checkpoint_save_interval 10 \
 --target_update_interval 1024 \
 --gifs_dir ./bin/gifs \
---gifs_save_interval 10
+--gifs_save_interval 1

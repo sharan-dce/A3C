@@ -38,16 +38,17 @@ def worker_process(tn, thread_number):
 
                 if done:
                     print('Thread {} Episode done'.format(thread_number))
+                    episode_count += 1
+                    with tn.summary_writer.as_default():
+                        tf.summary.histogram('episodes-played', episode_count, step = thread_number)
                     if thread_number == 0:
-                        episode_count += 1
                         with tn.summary_writer.as_default():
-                            print('Writing log info')
                             tf.summary.scalar('average-episode-reward', episode_reward, step = episode_count)
                         if episode_count % tn.checkpoint_save_interval == 0:
                             tn.actor_critic.save_weights(os.path.join(tn.checkpoint_dir, 'AC_' + str(episode_count)))
                         if episode_count % tn.gifs_save_interval == 0:
                             print('Saving GIF')
-                            mimsave(exportname = os.path.join(tn.checkpoint_dir, 'AC_' + str(episode_count)), frames = images, format = 'GIF', duration = 0.2)
+                            mimsave(os.path.join(tn.gifs_dir, 'AC_' + str(episode_count)) + '.gif', images, duration = 0.2)
                         images = []
 
                     episode_reward = 0.0
