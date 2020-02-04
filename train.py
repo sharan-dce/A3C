@@ -48,7 +48,7 @@ def worker_process(tn, thread_number):
                             tn.actor_critic.save_weights(os.path.join(tn.checkpoint_dir, 'AC_' + str(episode_count)))
                         if episode_count % tn.gifs_save_interval == 0:
                             print('Saving GIF')
-                            mimsave(os.path.join(tn.gifs_dir, 'AC_' + str(episode_count)) + '.gif', images, duration = 0.2)
+                            mimsave(os.path.join(tn.gifs_dir, 'AC_' + str(episode_count)) + '.gif', images, duration = 0.1)
                         images = []
 
                     episode_reward = 0.0

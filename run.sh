@@ -12,6 +12,6 @@ python3 __main__.py \
 --log_dir ./bin/logs \
 --threads 4 \
 --checkpoint_save_interval 10 \
---target_update_interval 1024 \
+--target_update_interval 128 \
 --gifs_dir ./bin/gifs \
 --gifs_save_interval 1
