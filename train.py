@@ -6,13 +6,13 @@ import os
 from imageio import mimsave
 
 def filter_grads(grad_var):
-    return [_ for _ in grad_var if _[0] != None]
+    return grad_var
 
-def manage_network_update(tn, tape):
+def manage_network_update(actor_loss, critic_loss, tn, tape):
     actor_grads = tape.gradient(actor_loss, tn.actor_critic.trainable_variables)
     critic_grads = tape.gradient(critic_loss, tn.actor_critic.trainable_variables)
-    tn.optimizer.apply_gradients(filter_grads(zip(actor_grads, tn.actor_critic.trainable_variables)))
-    tn.optimizer.apply_gradients(filter_grads(zip(critic_grads, tn.actor_critic.trainable_variables)))
+    tn.optimizer.apply_gradients(zip(actor_grads, tn.actor_critic.trainable_variables))
+    tn.optimizer.apply_gradients(zip(critic_grads, tn.actor_critic.trainable_variables))
     del tape
 
 def worker_process(tn, thread_number):
@@ -72,7 +72,7 @@ def worker_process(tn, thread_number):
                     update_point = True
 
         print('Update {} by thread {}'.format(parameter_updates, thread_number))
-        manage_network_update(tn = tn, tape = tape)
+        manage_network_update(actor_loss = actor_loss, critic_loss = critic_loss, tn = tn, tape = tape)
 
         if thread_number == 0 and tn.global_update_counter - last_update >= tn.target_update_interval:
             print('Update to target network by thread 0')

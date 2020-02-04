@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+
+rm  ./bin/checkpoints/* \
+    ./bin/logs/* \
+    ./bin/gifs/*
 python3 __main__.py \
 --learning_rate 0.0005 \
 --environment Breakout-v4 \
