@@ -10,7 +10,7 @@ python3 __main__.py \
 --gamma 0.99 \
 --checkpoint_dir ./bin/checkpoints/ \
 --log_dir ./bin/logs \
---threads 8 \
+--threads 4 \
 --checkpoint_save_interval 10 \
 --target_update_interval 1024 \
 --gifs_dir ./bin/gifs \
