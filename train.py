@@ -3,38 +3,25 @@ import tensorflow as tf
 from utils import process_screen
 import threading
 import os
-import imageio
+from imageio import mimsave
 
-def test_worker(tn, thread_number):
-    environment = tn.environments[thread_number]
-    state = process_screen(environment.reset())
-    done = False
-    tn.actor_critic.reset_thread_states()
-    if tn.render_testing:
-        environment.render()
-    try:
-        tn.actor_critic.reset_states()
-    except:
-        pass
+def filter_grads(grad_var):
+    return [_ for _ in grad_var if _[0] != None]
 
-    done = False
-    while not done:
-        actor_policy, critic_value = tn.actor_critic(state, thread_number)
-        action = tf.squeeze(tf.random.categorical(actor_policy, 1))
-
-        state, reward, done, _ = environment.step(action)
-        tn.total_reward += reward
-        if tn.render_testing:
-            environment.render()
-        state = process_screen(state)
-
+def manage_network_update(tn, tape):
+    actor_grads = tape.gradient(actor_loss, tn.actor_critic.trainable_variables)
+    critic_grads = tape.gradient(critic_loss, tn.actor_critic.trainable_variables)
+    tn.optimizer.apply_gradients(filter_grads(zip(actor_grads, tn.actor_critic.trainable_variables)))
+    tn.optimizer.apply_gradients(filter_grads(zip(critic_grads, tn.actor_critic.trainable_variables)))
+    del tape
 
 def worker_process(tn, thread_number):
     environment = tn.environments[thread_number]
-    parameter_updates = 0
-    update_counter = 0
-    last_update = 0
+    parameter_updates, update_counter, last_update, episode_count = (0, 0, 0, 0)
+    episode_reward = 0.0
     state = environment.reset()
+    if thread_number == 0:
+        images = [state]
     tn.actor_critic.reset_thread_states(thread_number)
     tn.target_network.reset_thread_states(thread_number)
     state = process_screen(state)
@@ -46,12 +33,28 @@ def worker_process(tn, thread_number):
                 actor_policy, critic_value = tn.actor_critic(state, thread_number)
                 action = tf.squeeze(tf.random.categorical(actor_policy, 1))
                 new_state, reward, done, _ = environment.step(action)
+                if thread_number == 0:
+                    images.append(new_state)
+                episode_reward += reward
                 new_state = process_screen(new_state)
 
                 if done:
+                    if thread_number == 0:
+                        episode_count += 1
+                        with tn.summary_writer.as_default():
+                            tf.summary.scalar('average-episode-reward', episode_reward, step = episode_count)
+                        if episode_count % tn.checkpoint_save_interval == 0:
+                            tn.actor_critic.save_weights(os.path.join(tn.checkpoint_dir, 'AC_' + str(episode_count)))
+                        if episode_count % tn.gifs_save_interval == 0:
+                            mimsave(exportname = os.path.join(tn.checkpoint_dir, 'AC_' + str(episode_count)), frames = images, format = 'GIF', duration = 0.2)
+                        images = []
+
+                    episode_reward = 0.0
                     target_value = reward
                     advantage = target_value - critic_value
                     state = environment.reset()
+                    if thread_number == 0:
+                        images = [state]
                     tn.actor_critic.reset_thread_states(thread_number)
                     tn.target_network.reset_thread_states(thread_number)
                     state = process_screen(state)
@@ -68,16 +71,11 @@ def worker_process(tn, thread_number):
                 if (update_counter - thread_number + tn.threads) % tn.threads == 0:
                     update_point = True
 
-        # do stuff with the tape and drop reference
-        actor_grads = tape.gradient(actor_loss, tn.actor_critic.trainable_variables)
-        critic_grads = tape.gradient(critic_loss, tn.actor_critic.trainable_variables)
-        parameter_updates += 1
         print('Update {} by thread {}'.format(parameter_updates, thread_number))
-        tn.optimizer.apply_gradients(zip(actor_grads, tn.actor_critic.trainable_variables))
-        tn.optimizer.apply_gradients(zip(critic_grads, tn.actor_critic.trainable_variables))
-        del tape
-        if thread_number == 0 and tn.global_update_counter - last_update >= 512:
-            # update
+        manage_network_update(tn = tn, tape = tape)
+
+        if thread_number == 0 and tn.global_update_counter - last_update >= tn.target_update_interval:
+            print('Update to target network by thread 0')
             tn.target_network.set_weights(tn.actor_critic.get_weights())
             last_update = tn.global_update_counter
 

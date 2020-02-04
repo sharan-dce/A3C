@@ -32,8 +32,9 @@ if __name__ == '__main__':
 	argparse.add_argument('--checkpoint_path', action = readable_file)
 	argparse.add_argument('--log_dir', action = readable_dir)
 	argparse.add_argument('--threads', type = int, default = 8)
-	argparse.add_argument('--gifs_save_interval', type = int)
 	argparse.add_argument('--checkpoint_save_interval', type = int)
+	argparse.add_argument('--target_update_interval', type = int, default = 1024)
+	argparse.add_argument('--gifs_save_interval', type = int)
 
 	args = argparse.parse_args()
 
@@ -43,6 +44,7 @@ if __name__ == '__main__':
 	args.optimizer = get_optimizer(args.optimizer)(args.learning_rate)
 	args.actor_critic = ActorCritic(args.environments[0].action_space.n)
 	args.actor_critic.set_threads(args.threads)
+	args.summary_writer = tf.summary.create_file_writer(args.log_dir)
 
 	if args.checkpoint_path != None:
 		args.actor_critic.load_weights(args.checkpoint_path)
