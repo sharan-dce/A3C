@@ -76,10 +76,7 @@ def worker_process(tn, thread_number):
         print('Update {} by thread {}'.format(parameter_updates, thread_number))
         manage_network_update(actor_loss = actor_loss, critic_loss = critic_loss, tn = tn, tape = tape)
         parameter_updates += 1
-        if thread_number == 0 and tn.global_update_counter - last_update >= tn.target_update_interval:
-            print('Update to target network by thread 0')
-            tn.target_network.set_weights(tn.actor_critic.get_weights())
-            last_update = tn.global_update_counter
+
 
 
 
