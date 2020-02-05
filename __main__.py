@@ -47,13 +47,13 @@ if __name__ == '__main__':
 	args.actor_critic.set_threads(args.threads)
 	args.target_network = ActorCritic(args.environments[0].action_space.n)
 	args.target_network.set_threads(args.threads)
-	if args.checkpoint_path == None:
-		sample_input = process_screen(args.environments[0].observation_space.sample())
-		args.actor_critic(sample_input, 0)
-		args.actor_critic.reset_thread_states(0)
-		args.target_network(sample_input, 0)
-		args.target_network.reset_thread_states(0)
-	else:
+
+	sample_input = process_screen(args.environments[0].observation_space.sample())
+	args.actor_critic(sample_input, 0)
+	args.actor_critic.reset_thread_states(0)
+	args.target_network(sample_input, 0)
+	args.target_network.reset_thread_states(0)
+	if args.checkpoint_path != None:
 		args.actor_critic.load_weights(args.checkpoint_path)
 		args.target_network.load_weights(args.checkpoint_path)
 
