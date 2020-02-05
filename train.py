@@ -7,8 +7,8 @@ from imageio import mimsave
 
 
 def manage_network_update(actor_loss, critic_loss, tn, tape):
-    actor_grads = tape.gradient(actor_loss, tn.actor_critic.trainable_variables)
-    critic_grads = tape.gradient(critic_loss, tn.actor_critic.trainable_variables)
+    actor_grads = tape.gradient(actor_loss, tn.actor_critic.trainable_variables, unconnected_gradients = 'zero')
+    critic_grads = tape.gradient(critic_loss, tn.actor_critic.trainable_variables, unconnected_gradients = 'zero')
     tn.optimizer.apply_gradients(zip(actor_grads, tn.actor_critic.trainable_variables))
     tn.optimizer.apply_gradients(zip(critic_grads, tn.actor_critic.trainable_variables))
     del tape
