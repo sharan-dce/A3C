@@ -70,7 +70,7 @@ def worker_process(tn, thread_number):
                 update_counter += 1
                 tn.global_update_counter += 1
 
-                if (update_counter - thread_number + tn.threads) % tn.threads == 0:
+                if (update_counter - thread_number + tn.update_intervals) % tn.update_intervals == 0:
                     update_point = True
 
         print('Update {} by thread {}'.format(parameter_updates, thread_number))
