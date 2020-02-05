@@ -19,7 +19,7 @@ class ActorCritic():
         self._critic = layers.Dense(1, activation = None)
 
     def _get_reset_state_per_thread(self):
-        return [[tf.zeros([1, 2048])], [tf.zeros([1, 1024])]]
+        return [[tf.zeros([1, 512])], [tf.zeros([1, 128])]]
 
     def set_threads(self, threads):
         self.threads = threads
