@@ -20,5 +20,6 @@ class readable_file(argparse.Action):
 
 def process_screen(image):
 	image = tf.expand_dims(tf.convert_to_tensor(image, dtype = tf.float32), axis = 0)
+	image = tf.image.resize(image, [84, 84])
 	image /= 1e-6 + tf.reduce_max(image)
 	return image * 2.0 - 1.0
