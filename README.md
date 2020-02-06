@@ -9,11 +9,11 @@ Then,
 chmod 777 ./run.sh  
 ./run  
 
-\  
+
 You can directly run the module (__main__.py) as:  
   
-python3 __main__.py \
---learning_rate 0.0002 \
+python3 __main__.py \\
+--learning_rate 0.0002 \\
 --gradient_clipping 5.0 \
 --environment Breakout-v0 \
 --gamma 0.99 \
