@@ -1,4 +1,11 @@
 # Asynchronous Advantage Actor Critic (A3C)
-\n
 Paper Link: https://arxiv.org/abs/1602.01783\  
-Asynchronously updates Policy and Value Nets by training episodes in parallel
+Asynchronously updates Policy and Value Nets by training episodes in parallel \
+
+## Running
+To create logs, checkpoints and gifs directories, run  
+chmod 777 ./refresh.sh  
+./refresh.sh  
+Then,
+chmod 777 ./run.sh  
+./run  
