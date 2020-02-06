@@ -64,7 +64,7 @@ def worker_process(tn, thread_number):
                     tn.actor_critic.reset_thread_states(thread_number)
                     state = process_screen(state)
                 else:
-                    target_value = reward + tn.gamma * tn.actor_critic(new_state, thread_number)[1]
+                    target_value = reward + tn.gamma * tn.actor_critic(new_state, thread_number)[1].numpy()
                     advantage = target_value - critic_value
                     state = new_state
 

@@ -12,14 +12,14 @@ class ActorCritic():
         self._layers.append(layers.Conv2D(filters = 32, kernel_size = 4, strides = 2, activation = tf.nn.leaky_relu))
         self._layers.append(layers.Reshape((1, -1)))
 
-        self._layers.append(layers.GRU(512, return_state = True, return_sequences = True))
-        self._layers.append(layers.GRU(128, return_state = True))
+        # self._layers.append(layers.GRU(512, return_state = True, return_sequences = True))
+        self._layers.append(layers.GRU(256, return_state = True))
 
         self._actor = layers.Dense(self.n_actions, activation = tf.nn.softmax)
         self._critic = layers.Dense(1, activation = None)
 
     def _get_reset_state_per_thread(self):
-        return [[tf.zeros([1, 512])], [tf.zeros([1, 128])]]
+        return [[tf.zeros([1, 256])]]
 
     def set_threads(self, threads):
         self.threads = threads
