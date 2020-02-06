@@ -4,8 +4,7 @@ Asynchronously updates Policy and Value Nets by training episodes in parallel \
 
 ## Running
 To create logs, checkpoints and gifs directories, run  
-chmod 777 ./refresh.sh  
-./refresh.sh  
+bash ./refresh.sh  
 Then,
 chmod 777 ./run.sh  
 ./run  
