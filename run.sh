@@ -4,9 +4,9 @@
 #     ./bin/logs/* \
 #     ./bin/gifs/*
 python3 __main__.py \
---learning_rate 0.0002 \
+--learning_rate 0.0001 \
 --gradient_clipping 5.0 \
---environment Pong-v0 \
+--environment Breakout-v0 \
 --gamma 0.99 \
 --checkpoint_dir ./bin/checkpoints/ \
 --log_dir ./bin/logs \

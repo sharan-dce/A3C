@@ -5,12 +5,17 @@ import threading
 import os
 from imageio import mimsave
 
+def process_gradients(actor_grads, critic_grads, tn):
+    grads = []
+    for a, c in zip(actor_grads, critic_grads):
+        grads.append(tf.clip_by_norm(a + 0.5 * c, tn.gradient_clipping))
+    return grads
 
 def manage_network_update(actor_loss, critic_loss, tn, tape):
     actor_grads = tape.gradient(actor_loss, tn.actor_critic.trainable_variables, unconnected_gradients = 'zero')
     critic_grads = tape.gradient(critic_loss, tn.actor_critic.trainable_variables, unconnected_gradients = 'zero')
-    tn.actor_optimizer.apply_gradients(zip(actor_grads, tn.actor_critic.trainable_variables))
-    tn.critic_optimizer.apply_gradients(zip(critic_grads, tn.actor_critic.trainable_variables))
+    grads = process_gradients(actor_grads, critic_grads, tn)
+    tn.optimizer.apply_gradients(zip(grads, tn.actor_critic.trainable_variables))
     del tape
 
 def worker_process(tn, thread_number):
@@ -21,7 +26,6 @@ def worker_process(tn, thread_number):
     if thread_number == 0:
         images = [state]
     tn.actor_critic.reset_thread_states(thread_number)
-    tn.target_network.reset_thread_states(thread_number)
     state = process_screen(state)
     while True:
         actor_loss, critic_loss = 0.0, 0.0
@@ -58,10 +62,9 @@ def worker_process(tn, thread_number):
                     if thread_number == 0:
                         images = [state]
                     tn.actor_critic.reset_thread_states(thread_number)
-                    tn.target_network.reset_thread_states(thread_number)
                     state = process_screen(state)
                 else:
-                    target_value = reward + tn.gamma * tn.target_network(new_state, thread_number)[1]
+                    target_value = reward + tn.gamma * tn.actor_critic(new_state, thread_number)[1]
                     advantage = target_value - critic_value
                     state = new_state
 
