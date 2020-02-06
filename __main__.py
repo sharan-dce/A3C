@@ -13,8 +13,8 @@ from utils import process_screen
 if __name__ == '__main__':
 	from argparse import ArgumentParser
 	argparse = ArgumentParser()
-	argparse.add_argument('--actor_learning_rate', type = float)
-	argparse.add_argument('--critic_learning_rate', type = float)
+	argparse.add_argument('--learning_rate', type = float)
+	# argparse.add_argument('--critic_learning_rate', type = float)
 	argparse.add_argument('--environment', type = str)
 	argparse.add_argument('--gamma', type = float)
 	argparse.add_argument('--checkpoint_dir', action = readable_dir)
