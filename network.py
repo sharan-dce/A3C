@@ -9,13 +9,13 @@ class ActorCritic():
         self.input_shape = input_shape
         self._layers = []
         if len(input_shape) > 1:
-            self._layers.append(layers.Conv2D(filters = 16, kernel_size = 8, strides = 4, activation = tf.nn.leaky_relu))
-            self._layers.append(layers.Conv2D(filters = 32, kernel_size = 4, strides = 2, activation = tf.nn.leaky_relu))
+            self._layers.append(layers.Conv2D(filters = 16, kernel_size = 8, strides = 4, activation = tf.nn.tanh))
+            self._layers.append(layers.Conv2D(filters = 32, kernel_size = 4, strides = 2, activation = tf.nn.tanh))
             self._layers.append(layers.Reshape((1, -1)))
             self._layers.append(layers.GRU(256, return_state = True))
         else:
-            self._layers.append(layers.Dense(units = 16, activation = tf.nn.leaky_relu))
-            self._layers.append(layers.Dense(units = 16, activation = tf.nn.leaky_relu))
+            self._layers.append(layers.Dense(units = 32, activation = tf.nn.tanh))
+            self._layers.append(layers.Dense(units = 32, activation = tf.nn.tanh))
             # self._layers.append(layers.Reshape((1, -1)))
             # self._layers.append(layers.GRU(256, return_state = True))
 

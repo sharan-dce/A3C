@@ -34,7 +34,7 @@ if __name__ == '__main__':
 	print('Creating {} environments for parallel processing'.format(args.threads))
 	args.environments = [gym.make(args.environment) for _ in range(args.threads)]
 
-	args.optimizer = tf.keras.optimizers.RMSprop(args.learning_rate, 0.99)
+	args.optimizer = tf.keras.optimizers.SGD(args.learning_rate)
 	args.actor_critic = ActorCritic(args.environments[0].action_space.n, input_shape = args.environments[0].observation_space.sample().shape)
 	args.actor_critic.set_threads(args.threads)
 

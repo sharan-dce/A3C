@@ -41,6 +41,7 @@ def worker_process(tn, thread_number):
                 actor_policy, critic_value = tn.actor_critic(state, thread_number)
                 action = tf.squeeze(tf.random.categorical(actor_policy, 1))
                 new_state, reward, done, _ = environment.step(action.numpy())
+                # print(reward)
                 if tn.render:
                     environment.render()
                 if thread_number == 0:
