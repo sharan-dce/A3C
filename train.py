@@ -52,8 +52,7 @@ def worker_process(tn, thread_number):
                 if done:
                     print('Thread {} Episode done'.format(thread_number))
                     episode_count += 1
-                    with tn.summary_writer.as_default():
-                        tf.summary.histogram('episodes-played', episode_count, step = thread_number)
+
                     if thread_number == 0:
                         with tn.summary_writer.as_default():
                             tf.summary.scalar('average-episode-reward', episode_reward, step = episode_count)

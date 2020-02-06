@@ -9,8 +9,7 @@ python3 __main__.py \
 --gradient_clipping 5.0 \
 --gamma 0.99 \
 --log_dir ./bin1/logs \
---threads 1 \
+--threads 8 \
 --update_intervals 5 \
---render \
 --critic_coefficient 0.1
 # --checkpoint_path ./bin/checkpoints/AC_1
