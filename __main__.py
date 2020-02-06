@@ -13,7 +13,8 @@ from utils import process_screen
 if __name__ == '__main__':
 	from argparse import ArgumentParser
 	argparse = ArgumentParser()
-	argparse.add_argument('--learning_rate', type = float)
+	argparse.add_argument('--actor_learning_rate', type = float)
+	argparse.add_argument('--critic_learning_rate', type = float)
 	argparse.add_argument('--environment', type = str)
 	argparse.add_argument('--gamma', type = float)
 	argparse.add_argument('--checkpoint_dir', action = readable_dir)
@@ -32,7 +33,8 @@ if __name__ == '__main__':
 	print('Creating {} environments for parallel processing'.format(args.threads))
 	args.environments = [gym.make(args.environment) for _ in range(args.threads)]
 
-	args.optimizer = tf.keras.optimizers.RMSprop(args.learning_rate, 0.99)
+	args.actor_optimizer = tf.keras.optimizers.RMSprop(args.learning_rate, 0.99)
+	args.critic_optimizer = tf.keras.optimizers.RMSprop(args.learning_rate, 0.99)
 	args.actor_critic = ActorCritic(args.environments[0].action_space.n)
 	args.actor_critic.set_threads(args.threads)
 	args.target_network = args.actor_critic

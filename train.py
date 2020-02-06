@@ -9,8 +9,8 @@ from imageio import mimsave
 def manage_network_update(actor_loss, critic_loss, tn, tape):
     actor_grads = tape.gradient(actor_loss, tn.actor_critic.trainable_variables, unconnected_gradients = 'zero')
     critic_grads = tape.gradient(critic_loss, tn.actor_critic.trainable_variables, unconnected_gradients = 'zero')
-    tn.optimizer.apply_gradients(zip(actor_grads, tn.actor_critic.trainable_variables))
-    tn.optimizer.apply_gradients(zip(critic_grads, tn.actor_critic.trainable_variables))
+    tn.actor_optimizer.apply_gradients(zip(actor_grads, tn.actor_critic.trainable_variables))
+    tn.critic_optimizer.apply_gradients(zip(critic_grads, tn.actor_critic.trainable_variables))
     del tape
 
 def worker_process(tn, thread_number):
@@ -85,6 +85,9 @@ def run_training_procedure(tn): # tn is training_namespace
     tn.total_reward = 0.0
     tn.global_update_counter = 0
     # get threads to work
+    if tn.threads == 1:
+        worker_process(tn, 0)
+        quit()
     thread_list = [threading.Thread(target = worker_process, args = (tn, i)) for i in range(tn.threads)]
     for thread in thread_list:
         thread.start()
