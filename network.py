@@ -4,16 +4,25 @@ import types
 import dill
 
 class ActorCritic():
-    def __init__(self, n_actions):
+    def __init__(self, n_actions, input_shape):
         self.n_actions = n_actions
-
+        self.input_shape = input_shape
         self._layers = []
-        self._layers.append(layers.Conv2D(filters = 16, kernel_size = 8, strides = 4, activation = tf.nn.leaky_relu))
-        self._layers.append(layers.Conv2D(filters = 32, kernel_size = 4, strides = 2, activation = tf.nn.leaky_relu))
-        self._layers.append(layers.Reshape((1, -1)))
+        if len(input_shape) > 1:
+            self._layers.append(layers.Conv2D(filters = 16, kernel_size = 8, strides = 4, activation = tf.nn.leaky_relu))
+            self._layers.append(layers.Conv2D(filters = 32, kernel_size = 4, strides = 2, activation = tf.nn.leaky_relu))
+            self._layers.append(layers.Reshape((1, -1)))
+            self._layers.append(layers.GRU(256, return_state = True))
+        else:
+            self._layers.append(layers.Dense(units = 16, activation = tf.nn.leaky_relu))
+            self._layers.append(layers.Dense(units = 16, activation = tf.nn.leaky_relu))
+            # self._layers.append(layers.Reshape((1, -1)))
+            # self._layers.append(layers.GRU(256, return_state = True))
+
+
 
         # self._layers.append(layers.GRU(512, return_state = True, return_sequences = True))
-        self._layers.append(layers.GRU(256, return_state = True))
+
 
         self._actor = layers.Dense(self.n_actions, activation = tf.nn.softmax)
         self._critic = layers.Dense(1, activation = None)

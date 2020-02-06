@@ -26,6 +26,8 @@ if __name__ == '__main__':
 	argparse.add_argument('--update_intervals', type = int)
 	argparse.add_argument('--gifs_save_interval', type = int)
 	argparse.add_argument('--gradient_clipping', type = float)
+	argparse.add_argument('--render', action = 'store_true')
+	argparse.add_argument('--critic_coefficient', type = float)
 
 	args = argparse.parse_args()
 
@@ -33,7 +35,7 @@ if __name__ == '__main__':
 	args.environments = [gym.make(args.environment) for _ in range(args.threads)]
 
 	args.optimizer = tf.keras.optimizers.RMSprop(args.learning_rate, 0.99)
-	args.actor_critic = ActorCritic(args.environments[0].action_space.n)
+	args.actor_critic = ActorCritic(args.environments[0].action_space.n, input_shape = args.environments[0].observation_space.sample().shape)
 	args.actor_critic.set_threads(args.threads)
 
 	sample_input = process_screen(args.environments[0].observation_space.sample())

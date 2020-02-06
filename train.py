@@ -8,7 +8,11 @@ from imageio import mimsave
 def process_gradients(actor_grads, critic_grads, tn):
     grads = []
     for a, c in zip(actor_grads, critic_grads):
-        grads.append(tf.clip_by_norm(a + 0.5 * c, tn.gradient_clipping))
+        grad = a + tn.critic_coefficient * c
+        # print(tf.norm(a).numpy(), tf.norm(c).numpy())
+        if tn.gradient_clipping != None:
+            grad = tf.clip_by_norm(grad, tn.gradient_clipping)
+        grads.append(grad)
     return grads
 
 def manage_network_update(actor_loss, critic_loss, tn, tape):
@@ -23,6 +27,8 @@ def worker_process(tn, thread_number):
     parameter_updates, update_counter, last_update, episode_count = (0, 0, 0, 0)
     episode_reward = 0.0
     state = environment.reset()
+    if tn.render:
+        environment.render()
     if thread_number == 0:
         images = [state]
     tn.actor_critic.reset_thread_states(thread_number)
@@ -34,7 +40,9 @@ def worker_process(tn, thread_number):
             while not update_point:
                 actor_policy, critic_value = tn.actor_critic(state, thread_number)
                 action = tf.squeeze(tf.random.categorical(actor_policy, 1))
-                new_state, reward, done, _ = environment.step(action)
+                new_state, reward, done, _ = environment.step(action.numpy())
+                if tn.render:
+                    environment.render()
                 if thread_number == 0:
                     images.append(new_state)
                 episode_reward += reward
@@ -48,9 +56,9 @@ def worker_process(tn, thread_number):
                     if thread_number == 0:
                         with tn.summary_writer.as_default():
                             tf.summary.scalar('average-episode-reward', episode_reward, step = episode_count)
-                        if episode_count % tn.checkpoint_save_interval == 0:
+                        if tn.checkpoint_save_interval != None and episode_count % tn.checkpoint_save_interval == 0:
                             tn.actor_critic.save_weights(os.path.join(tn.checkpoint_dir, 'AC_' + str(episode_count)))
-                        if episode_count % tn.gifs_save_interval == 0:
+                        if tn.gifs_save_interval != None and episode_count % tn.gifs_save_interval == 0:
                             print('Saving GIF')
                             mimsave(os.path.join(tn.gifs_dir, 'AC_' + str(episode_count)) + '.gif', images, duration = 0.1)
                         images = []
@@ -59,6 +67,8 @@ def worker_process(tn, thread_number):
                     target_value = reward
                     advantage = target_value - critic_value
                     state = environment.reset()
+                    if tn.render:
+                        environment.render()
                     if thread_number == 0:
                         images = [state]
                     tn.actor_critic.reset_thread_states(thread_number)

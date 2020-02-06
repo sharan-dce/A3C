@@ -5,14 +5,12 @@
 #     ./bin/gifs/*
 python3 __main__.py \
 --learning_rate 0.0001 \
+--environment CartPole-v1 \
 --gradient_clipping 5.0 \
---environment Breakout-v0 \
 --gamma 0.99 \
---checkpoint_dir ./bin/checkpoints/ \
---log_dir ./bin/logs \
---threads 4 \
---checkpoint_save_interval 1 \
+--log_dir ./bin1/logs \
+--threads 1 \
 --update_intervals 5 \
---gifs_dir ./bin/gifs \
---gifs_save_interval 1 \
+--render \
+--critic_coefficient 0.1
 # --checkpoint_path ./bin/checkpoints/AC_1
