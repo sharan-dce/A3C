@@ -25,7 +25,7 @@ python3 \_\_main\_\_.py \\
 --update_intervals 5 \\  
 --gifs_dir ./bin/gifs \\  
 --gifs_save_interval 1 \\  
-# --checkpoint_path ./bin/checkpoints/AC_1  
+\# --checkpoint_path ./bin/checkpoints/AC_1  
 
 
 ## Change Config
