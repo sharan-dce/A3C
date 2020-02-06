@@ -10,7 +10,7 @@ chmod 777 ./run.sh
 ./run  
 
 
-You can directly run the module (__main__.py) as:  
+You can directly run the module (_\_main__.py) as:  
   
 python3 __main__.py \\  
 --learning_rate 0.0002 \\  
