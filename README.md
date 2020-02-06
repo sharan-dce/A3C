@@ -8,3 +8,5 @@ bash ./refresh.sh
 Then,
 chmod 777 ./run.sh  
 ./run  
+## Change Config
+In run.sh, all arguments passed to the __main__.py script are listed. Modify them as you wish. The environment argument expects a standard gym environment which can be built using gym.make(). Parameters have been shared between the Policy and Value nets. I am using 4 threads for my testing, but use 16 if possible (my lappy cant take more :P).  
