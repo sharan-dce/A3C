@@ -71,7 +71,6 @@ def worker_process(tn, thread_number):
                 actor_loss -= advantage.numpy() * tf.math.log(actor_policy[0][action] + 1e-5)
                 critic_loss += tf.square(advantage)
                 update_counter += 1
-                tn.global_update_counter += 1
 
                 if (update_counter - thread_number + tn.update_intervals) % tn.update_intervals == 0:
                     update_point = True
@@ -79,7 +78,8 @@ def worker_process(tn, thread_number):
         print('Update {} by thread {}'.format(parameter_updates, thread_number))
         manage_network_update(actor_loss = actor_loss, critic_loss = critic_loss, tn = tn, tape = tape)
         parameter_updates += 1
-
+        tn.global_update_counter += 1
+        print('Global updates: ' + str(tn.global_update_counter))
 
 
 
