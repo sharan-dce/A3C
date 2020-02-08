@@ -27,7 +27,7 @@ def worker_process(tn, thread_number):
     parameter_updates, update_counter, last_update, episode_count = (0, 0, 0, 0)
     episode_reward = 0.0
     state = environment.reset()
-    if tn.render:
+    if tn.render and thread_number == 0:
         environment.render()
     if thread_number == 0:
         images = [state]
@@ -42,7 +42,7 @@ def worker_process(tn, thread_number):
                 action = tf.squeeze(tf.random.categorical(actor_policy, 1))
                 new_state, reward, done, _ = environment.step(action.numpy())
                 # print(reward)
-                if tn.render:
+                if tn.render and thread_number == 0:
                     environment.render()
                 if thread_number == 0:
                     images.append(new_state)
@@ -67,7 +67,7 @@ def worker_process(tn, thread_number):
                     target_value = reward
                     advantage = target_value - critic_value
                     state = environment.reset()
-                    if tn.render:
+                    if tn.render and thread_number == 0:
                         environment.render()
                     if thread_number == 0:
                         images = [state]
@@ -98,11 +98,7 @@ def run_training_procedure(tn): # tn is training_namespace
     tn.total_reward = 0.0
     tn.global_update_counter = 0
     # get threads to work
-    if tn.threads == 1:
-        worker_process(tn, 0)
-        quit()
-    thread_list = [threading.Thread(target = worker_process, args = (tn, i)) for i in range(tn.threads)]
+    thread_list = [threading.Thread(target = worker_process, args = (tn, i)) for i in range(1, tn.threads)]
     for thread in thread_list:
         thread.start()
-    for thread in thread_list:
-        thread.join()
+    worker_process(tn, 0)

@@ -10,10 +10,11 @@ python3 __main__.py \
 --gamma 0.99 \
 --checkpoint_dir ./bin/checkpoints/ \
 --log_dir ./bin/logs \
---threads 4 \
---critic_coefficient 0.1 \
+--threads 2 \
+--critic_coefficient 0.35 \
 --checkpoint_save_interval 1 \
 --update_intervals 5 \
 --gifs_dir ./bin/gifs \
 --gifs_save_interval 1 \
+--render
 # --checkpoint_path ./bin/checkpoints/AC_1
