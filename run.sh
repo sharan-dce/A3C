@@ -10,7 +10,7 @@ python3 __main__.py \
 --gamma 0.99 \
 --checkpoint_dir ./bin/checkpoints/ \
 --log_dir ./bin/logs \
---threads 2 \
+--threads 4 \
 --critic_coefficient 0.35 \
 --checkpoint_save_interval 1 \
 --update_intervals 5 \
