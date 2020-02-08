@@ -13,7 +13,7 @@ chmod 777 ./run.sh
 You can directly run the module (\_\_main\_\_.py) as:  
   
 python3 \_\_main\_\_.py \\  
---learning_rate 0.0002 \\  
+--learning_rate 0.003 \\  
 --gradient_clipping 5.0 \\  
 --environment Breakout-v0 \\  
 --gamma 0.99 \\  
