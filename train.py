@@ -9,7 +9,6 @@ def process_gradients(actor_grads, critic_grads, tn):
     grads = []
     for a, c in zip(actor_grads, critic_grads):
         grad = a + tn.critic_coefficient * c
-        # print(tf.norm(a).numpy(), tf.norm(c).numpy())
         if tn.gradient_clipping != None:
             grad = tf.clip_by_norm(grad, tn.gradient_clipping)
         grads.append(grad)
@@ -40,7 +39,7 @@ def worker_process(tn, thread_number):
             while not update_point:
                 actor_policy, critic_value = tn.actor_critic(state, thread_number)
                 action = tf.squeeze(tf.random.categorical(actor_policy, 1))
-                new_state, reward, done, _ = environment.step(action.numpy())
+                new_state, reward, done, _ = environment.step(tf.stop_gradient(action))
                 # print(reward)
                 if tn.render and thread_number == 0:
                     environment.render()
@@ -74,11 +73,11 @@ def worker_process(tn, thread_number):
                     tn.actor_critic.reset_thread_states(thread_number)
                     state = process_screen(state)
                 else:
-                    target_value = reward + tn.gamma * tn.actor_critic(new_state, thread_number)[1].numpy()
+                    target_value = reward + tn.gamma * tf.stop_gradient(tn.actor_critic(new_state, thread_number)[1])
                     advantage = target_value - critic_value
                     state = new_state
 
-                actor_loss -= advantage.numpy() * tf.math.log(actor_policy[0][action] + 1e-5)
+                actor_loss -= tf.stop_gradient(advantage) * tf.math.log(actor_policy[0][action] + 1e-5)
                 critic_loss += tf.square(advantage)
                 update_counter += 1
 
