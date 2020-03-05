@@ -38,7 +38,7 @@ def worker_process(tn, thread_number):
             update_point = False
             while not update_point:
                 actor_policy, critic_value = tn.actor_critic(state, thread_number)
-                action = tf.squeeze(tf.random.categorical(actor_policy, 1))
+                action = tf.squeeze(tf.random.categorical(tf.math.log(actor_policy), 1))
                 new_state, reward, done, _ = environment.step(tf.stop_gradient(action))
                 # print(reward)
                 if tn.render and thread_number == 0:
